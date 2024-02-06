@@ -10,15 +10,14 @@
     <div class="container">
       <h1>Mis Notas</h1>
       <textarea
-        rows="5"
-        id="notaText"
+        id="note-input"
         name="campoTexto"
         placeholder="Algo para recordar"
         oninput="ajustarAlturaTextArea(this)"
       ></textarea>
 
-      <button onclick="agregarNota()">Crear</button>
-      <ul id="listaNotas"></ul>
+      <button id="boton-crear" onclick="agregarNota()">Crear</button>
+      <ul id="lista-notas"></ul>
     </div>
     <script src="/js/misnotas.js"></script>
   </body>
