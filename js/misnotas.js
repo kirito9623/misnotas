@@ -1,56 +1,73 @@
 document.addEventListener("DOMContentLoaded", cargarNotas);
 
 function cargarNotas() {
-    //Obtiene lista de notas del almacenamiento local.
-    const listaNotas = obtenerNotas();
-    const listaNotasElemento = document.getElementById("listaNotas");
-    listaNotasElemento.innerHTML = "";
-    listaNotas.forEach((nota, index) => {
-        const li = document.createElement("li");
-        const textarea = document.createElement("textarea");
-        textarea.setAttribute("readonly", "true");
-        textarea.id = `notaTexto`;
-        textarea.value = nota;
-        textarea.addEventListener("input", () => ajustarAlturaTextArea(textarea));
-
-        const botonBorrar = document.createElement("button");
-        botonBorrar.id = "botonborrar";
-        botonBorrar.textContent = "Borrar";
-        botonBorrar.addEventListener("click", () => eliminarNota(index));
-
-        li.appendChild(textarea);
-        li.appendChild(botonBorrar);
-        listaNotasElemento.appendChild(li);
-
-        ajustarAlturaTextArea(textarea); // Ajustar altura al cargar las notas
-    });
+  //Obtiene lista de notas del almacenamiento local.
+  const listaNotas = obtenerNotas();
+  const listaNotasElemento = document.getElementById("lista-notas");
+  listaNotasElemento.innerHTML = "";
+  listaNotas.forEach((text) => {
+    const li = crearElementoNota(text);
+    listaNotasElemento.appendChild(li);
+  });
 }
 function obtenerNotas() {
-    return JSON.parse(localStorage.getItem("notas")) || [];
+  return JSON.parse(localStorage.getItem("notas")) || [];
 }
 
 function agregarNota() {
-    const notaText = document.getElementById("notaText").value;
-    if (notaText.trim() !== "") {
-        const listaNotas = obtenerNotas();
-        listaNotas.push(notaText);
-        localStorage.setItem("notas", JSON.stringify(listaNotas));
-        cargarNotas();
-        document.getElementById("notaText").value = "";
-    }
+  const noteInput = document.getElementById("note-input");
+  const notaText = noteInput.value;
+  if (notaText.trim() === "") {
+    return;
+  }
+
+  //Actualizar el local Storage
+  const listaNotas = obtenerNotas();
+  listaNotas.push(notaText);
+  localStorage.setItem("notas", JSON.stringify(listaNotas));
+
+  //Actualizar el DOM
+  const listaNotasElemento = document.getElementById("lista-notas");
+  const li = crearElementoNota(notaText, listaNotas.length - 1);
+  listaNotasElemento.appendChild(li);
+
+  noteInput.value = "";
+  ajustarAlturaTextArea(noteInput);
 }
 
-function eliminarNota(index) {
-    const listaNotas = obtenerNotas();
-    listaNotas.splice(index, 1);
-    localStorage.setItem("notas", JSON.stringify(listaNotas));
-    cargarNotas();
+function eliminarNota(elemento) {
+  const listaNotasElemento = document.getElementById("lista-notas");
+  const children = listaNotasElemento.children;
+
+  //Actualizar el local Storage
+  const listaNotas = obtenerNotas();
+  listaNotas.splice([...children].indexOf(elemento), 1);
+  localStorage.setItem("notas", JSON.stringify(listaNotas));
+  //Actualizar el DOM
+  listaNotasElemento.removeChild(elemento);
 }
 
 function ajustarAlturaTextArea(textarea) {
-    textarea.style.height = "auto";
-    textarea.style.height = `${textarea.scrollHeight}px`;
+  textarea.style.height = "auto";
+  textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
+function crearElementoNota(texto) {
+  const nuevaNota = document.createElement("li");
+  const contentEl = document.createElement("pre");
+  //textarea.setAttribute("readonly", "true");
+  nuevaNota.className = "note"
+  contentEl.className = "note-content";
+  contentEl.innerHTML = texto;
+  //ajustarAlturaTextArea(textarea); // Ajustar altura al cargar las notas
 
+  const botonBorrar = document.createElement("button");
+  botonBorrar.className = "boton-borrar";
+  botonBorrar.textContent = "Borrar";
+  botonBorrar.addEventListener("click", () => eliminarNota(nuevaNota));
 
+  nuevaNota.appendChild(contentEl);
+  nuevaNota.appendChild(botonBorrar);
+
+  return nuevaNota;
+}
