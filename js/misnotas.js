@@ -1,5 +1,10 @@
 document.addEventListener("DOMContentLoaded", cargarNotas);
 
+
+function obtenerNotas() {
+  return JSON.parse(localStorage.getItem("notas")) || [];
+}
+
 function cargarNotas() {
   //Obtiene lista de notas del almacenamiento local.
   const listaNotas = obtenerNotas();
@@ -9,9 +14,6 @@ function cargarNotas() {
     const li = crearElementoNota(text);
     listaNotasElemento.appendChild(li);
   });
-}
-function obtenerNotas() {
-  return JSON.parse(localStorage.getItem("notas")) || [];
 }
 
 function agregarNota() {
